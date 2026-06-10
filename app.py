@@ -154,4 +154,6 @@ if __name__ == "__main__":
     print("Collecte initiale des flux OSINT...")
     fetch_all()
     print(f"\nOuvrez : http://localhost:5050\n")
-    app.run(host="0.0.0.0", port=5050, debug=False)
+    import os
+    port = int(os.environ.get("PORT", 5050))
+    app.run(host="0.0.0.0", port=port, debug=False)
