@@ -6,7 +6,7 @@ Dépendances : pip install flask flask-cors feedparser requests beautifulsoup4
 """
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
-import feedparser, requests, json, re, threading
+import feedparser, requests, json, re, threading, time
 from bs4 import BeautifulSoup
 from datetime import datetime
 import os
@@ -153,7 +153,16 @@ if __name__ == "__main__":
     print("=" * 55)
     print("Collecte initiale des flux OSINT...")
     fetch_all()
+
+    def auto_refresh():
+        while True:
+            time.sleep(30 * 60)  # toutes les 30 minutes
+            print("Auto-refresh OSINT...")
+            fetch_all()
+
+    t_auto = threading.Thread(target=auto_refresh, daemon=True)
+    t_auto.start()
+
     print(f"\nOuvrez : http://localhost:5050\n")
-    import os
     port = int(os.environ.get("PORT", 5050))
     app.run(host="0.0.0.0", port=port, debug=False)
