@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import os
 
-app  = Flask(__name__, static_folder='.')
+app  = Flask(__name__)
 CORS(app)
 
 RSS_FEEDS = [
@@ -123,7 +123,7 @@ def fetch_all():
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "ERM_OSINT_Dashboard.html")
+    return open("ERM_OSINT_Dashboard.html", encoding="utf-8").read()
 
 @app.route("/api/status")
 def api_status():
