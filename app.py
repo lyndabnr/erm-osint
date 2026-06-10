@@ -8,10 +8,13 @@ from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 import feedparser, requests, json, re, threading, time
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+def now_paris():
+    return datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=2)))
 import os
 
-app  = Flask(__name__)
+app  = Flask(__name__, static_folder='.')
 CORS(app)
 
 RSS_FEEDS = [
@@ -116,14 +119,14 @@ def fetch_all():
         "risks": new_risks,
         "alerts": [{"id":s["id"],"title":s["title"],"source":s["source"],"category":s["category"],"time":s["date"]} for s in unique if s["criticality"]=="Élevé"][:5],
         "stats": {"total":len(unique),"critical":sum(1 for s in unique if s["criticality"]=="Élevé"),"medium":sum(1 for s in unique if s["criticality"]=="Moyen"),"low":sum(1 for s in unique if s["criticality"]=="Faible")},
-        "last_update": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        "last_update": now_paris().strftime("%d/%m/%Y %H:%M:%S"),
         "loading": False,
     })
     print(f"[{state['last_update']}] {state['stats']['total']} signaux — {state['stats']['critical']} critiques")
 
 @app.route("/")
 def index():
-    return open("ERM_OSINT_Dashboard.html", encoding="utf-8").read()
+    return send_from_directory(".", "ERM_OSINT_Dashboard.html")
 
 @app.route("/api/status")
 def api_status():
