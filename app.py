@@ -126,7 +126,9 @@ def fetch_all():
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "ERM_OSINT_Dashboard.html")
+    import os
+    path = os.path.join(os.path.dirname(__file__), "ERM_OSINT_Dashboard.html")
+    return open(path, encoding="utf-8").read()
 
 @app.route("/api/status")
 def api_status():
